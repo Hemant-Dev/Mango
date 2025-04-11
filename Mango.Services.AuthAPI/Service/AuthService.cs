@@ -18,9 +18,11 @@ namespace Mango.Services.AuthAPI.Service
             _userManager = userManager;
             _roleManager = roleManager;
         }
-        public Task<LoginRequestDto> Login(LoginRequestDto loginRequestDto)
+        public async Task<LoginRequestDto> Login(LoginRequestDto loginRequestDto)
         {
-            throw new NotImplementedException();
+            var user = _db.ApplicationUsers.FirstOrDefault(u => u.UserName.ToLower() == loginRequestDto.UserName.ToLower());
+            //bool isValid = await _userManager.
+            return new LoginRequestDto();
         }
 
         public async Task<string> Register(RegistrationRequestDto registrationRequestDto)

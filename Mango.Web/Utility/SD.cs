@@ -9,6 +9,8 @@
 
         public const string RoleCustomer = "CUSTOMER";
 
+        public const string TokenCookie = "JwtToken";
+
         public enum ApiType
         {
             GET,

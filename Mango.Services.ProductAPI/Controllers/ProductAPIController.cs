@@ -14,12 +14,14 @@ namespace Mango.Services.ProductAPI.Controllers
     public class ProductAPIController : ControllerBase
     {
         private readonly AppDbContext _db;
-        private readonly IMapper _mapper;
         private ResponseDto _response;
+        private IMapper _mapper;
+
         public ProductAPIController(AppDbContext db, IMapper mapper)
         {
             _db = db;
             _mapper = mapper;
+            _response = new ResponseDto();
         }
 
         [HttpGet]

@@ -1,4 +1,6 @@
-﻿namespace Mango.Services.ShoppingCartAPI.Models.Dto
+﻿using Mango.Services.ShoppingCartAPI.Models.Dto;
+
+namespace Mango.Services.ShoppingCartAPI.Dto
 {
     public class CartDto
     {

@@ -5,15 +5,19 @@ using Mango.Web.Service.IService;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
+using IdentityModel;
 
 namespace Mango.Web.Controllers;
 
 public class HomeController : Controller
 {
     private readonly IProductService _productService;
-    public HomeController(IProductService productService)
+    private readonly ICartService _cartService;
+
+    public HomeController(IProductService productService, ICartService cartService)
     {
         _productService = productService;
+        _cartService = cartService;
     }
 
     public async Task<IActionResult> Index()
@@ -35,22 +39,38 @@ public class HomeController : Controller
     }
 
     [Authorize]
-    public async Task<IActionResult> ProductDetails(int productId)
+    [HttpPost]
+    [ActionName("ProductDetails")]
+    public async Task<IActionResult> ProductDetails(ProductDto productDto)
     {
-        ProductDto? model = new();
+        CartDto cartDto = new CartDto()
+        {
+            CartHeader = new CartHeaderDto
+            {
+                UserId = User.Claims.Where(u => u.Type == JwtClaimTypes.Subject)?.FirstOrDefault()?.Value
+            }
+        };
 
-        ResponseDto? response = await _productService.GetProductByIdAsync(productId);
+        CartDetailsDto cartDetailsDto = new CartDetailsDto()
+        {
+            Count = productDto.Count,
+            ProductId = productDto.ProductId,
+        };
 
+        List<CartDetailsDto> cartDetailsDtos = new() { cartDetailsDto };
+        cartDto.CartDetails = cartDetailsDtos;
+
+        ResponseDto? response = await _cartService.UpsertCartAsync(cartDto);
         if (response != null && response.IsSuccess)
         {
-            model = JsonConvert.DeserializeObject<ProductDto>(Convert.ToString(response.Result));
+            TempData["success"] = "Product added to cart successfully";
+            return RedirectToAction(nameof(Index));
         }
         else
         {
             TempData["error"] = response?.Message;
         }
-
-        return View(model);
+        return View(productDto);
     }
 
     public IActionResult Privacy()

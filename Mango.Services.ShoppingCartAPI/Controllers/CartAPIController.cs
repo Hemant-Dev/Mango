@@ -33,12 +33,14 @@ namespace Mango.Services.ShoppingCartAPI.Controllers
         {
             try
             {
+                
                 CartDto cartDto = new()
                 {
                     CartHeader = _mapper.Map<CartHeaderDto>(_db.CartHeaders
-                        .FirstOrDefaultAsync(u => u.UserId == userId))
+                        .First(u => u.UserId == userId))
                 };
                 
+
                 cartDto.CartDetails = _mapper.Map<IEnumerable<CartDetailsDto>>(_db.CartDetails
                     .Where(u => u.CartHeaderId == cartDto.CartHeader.CartHeaderId));
 
